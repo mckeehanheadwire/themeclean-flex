@@ -12,6 +12,10 @@ import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.peregrine.commons.util.PerConstants.PAGE_PRIMARY_TYPE;
+import static com.peregrine.commons.util.PerConstants.JCR_CONTENT;
+import static com.peregrine.commons.util.PerConstants.JCR_PRIMARY_TYPE;
+import static com.peregrine.commons.util.PerConstants.JCR_TITLE;
 
 import java.util.List;
 
@@ -337,12 +341,36 @@ public class PagetitleModel extends SimpletextModel {
 
 	public String getText() {
 		try{
-      Resource page = getRootResource();
-			ValueMap props = page.adaptTo(ValueMap.class);
-      return props.get("jcr:title", "title not found");
+      Resource page = getCurrentPage(getResource());
+      Resource jcrcontent = page == null ? null : page.getChild(JCR_CONTENT);
+			ValueMap props = jcrcontent.adaptTo(ValueMap.class);
+      return props.get(JCR_TITLE, "title not found");
 		} catch(Exception e){
 			LOG.error("getPageTitle error: {}",e);
 			return "title not found....";
 		}
-	}
+  }
+  
+  private Resource getCurrentPage(Resource resource) {
+    if(resource == null) { return null; }
+    String resourceType = null;
+    try{
+      ValueMap props = resource.adaptTo(ValueMap.class);
+      resourceType = props.get(JCR_PRIMARY_TYPE, "type not found");
+      LOG.debug("resource type is: " + resourceType + "  path is:" + resource.getPath());
+      // we only care about per:page node
+      if(PAGE_PRIMARY_TYPE.equals(resourceType)) {
+        LOG.debug("returned resource type is: " + resourceType + "  path is:" + resource.getPath());
+        return resource;
+      }
+      else {
+        if(resource.getParent() != null) {
+          return getCurrentPage(resource.getParent());
+        }
+      }
+    } catch(Exception e){
+        LOG.error("Exception: " + e);
+    }
+    return null;
+  }
 }
