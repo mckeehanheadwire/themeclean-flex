@@ -1,26 +1,19 @@
 package com.themecleanflex.models;
 
-import com.peregrine.nodetypes.models.AbstractComponent;
+import static com.peregrine.commons.util.PerConstants.JCR_CONTENT;
+import static com.peregrine.commons.util.PerConstants.JCR_PRIMARY_TYPE;
+import static com.peregrine.commons.util.PerConstants.JCR_TITLE;
+import static com.peregrine.commons.util.PerConstants.PAGE_PRIMARY_TYPE;
+
 import com.peregrine.nodetypes.models.IComponent;
-import com.peregrine.nodetypes.models.Container;
+
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.peregrine.commons.util.PerConstants.PAGE_PRIMARY_TYPE;
-import static com.peregrine.commons.util.PerConstants.JCR_CONTENT;
-import static com.peregrine.commons.util.PerConstants.JCR_PRIMARY_TYPE;
-import static com.peregrine.commons.util.PerConstants.JCR_TITLE;
-
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /*
     //GEN[:DATA
@@ -341,7 +334,7 @@ public class PagetitleModel extends SimpletextModel {
 
 	public String getText() {
 		try{
-      Resource page = getCurrentPage(getResource());
+      Resource page = getCurrentPage(getRootResource());
       Resource jcrcontent = page == null ? null : page.getChild(JCR_CONTENT);
 			ValueMap props = jcrcontent.adaptTo(ValueMap.class);
       return props.get(JCR_TITLE, "title not found");
