@@ -1,0 +1,7 @@
+{
+  "title": "Page Title",
+  "group": "Text Components",
+  "model": {
+    "element": "h1"
+  }
+}
